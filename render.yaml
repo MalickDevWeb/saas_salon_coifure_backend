@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: suniou-backend
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: develop
+    buildCommand: npm install --include=dev && npm run prisma:generate && npm run build
+    startCommand: npx prisma migrate deploy && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: suniou-backend-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+
+databases:
+  - name: suniou-backend-db
+    plan: free
+    region: frankfurt
+    postgresMajorVersion: "17"

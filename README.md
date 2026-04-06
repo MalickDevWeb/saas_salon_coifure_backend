@@ -46,6 +46,7 @@ npm install
 cp .env.example .env
 npx prisma generate
 npx prisma migrate dev --name init
+npm run seed
 npm run dev
 ```
 
@@ -62,13 +63,49 @@ PORT=3000
 - `GET /health`
 - `POST /api/auth/register`
 - `POST /api/auth/login`
+- `GET /api/auth/me`
 - `GET /api/salons`
 - `GET /api/salons/nearby?lat=14.7167&lon=-17.4677&radius=5`
+- `POST /api/salons`
+- `GET /api/salons/me/bookings`
+- `POST /api/services`
 - `POST /api/bookings`
 - `GET /api/bookings/me`
 - `GET /api/products?salonId=<id>`
+- `POST /api/products`
 - `POST /api/orders`
 - `GET /api/orders/me`
+
+## Seed demo
+
+```bash
+npm run seed
+```
+
+Demo accounts:
+
+- `owner@suniou.app` / `Password123!`
+- `client@suniou.app` / `Password123!`
+
+## Deploy Render
+
+Le repo contient deja `render.yaml` et des migrations versionnees.
+
+Flux conseille:
+
+```bash
+npm install
+npm run build
+git push origin develop
+```
+
+Puis dans Render:
+
+1. Creer le service via `render.yaml`
+2. Laisser Render provisionner la base Postgres
+3. Verifier que `JWT_SECRET` est bien defini
+4. Deployer la branche `develop`
+5. Executer `npm run seed` en one-off shell si tu veux des donnees de demo
 
 ## Git
 

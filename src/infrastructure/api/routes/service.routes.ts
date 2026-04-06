@@ -1,15 +1,14 @@
 import { Router } from "express";
 import { ITokenService } from "../../../domain/services/ITokenService";
-import { ProductController } from "../../../interfaces/controllers/ProductController";
+import { ServiceController } from "../../../interfaces/controllers/ServiceController";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { roleMiddleware } from "../middlewares/role.middleware";
 
-export const buildProductRouter = (
-  controller: ProductController,
+export const buildServiceRouter = (
+  controller: ServiceController,
   tokenService: ITokenService
 ): Router => {
   const router = Router();
-  router.get("/", controller.list);
   router.post(
     "/",
     authMiddleware(tokenService),

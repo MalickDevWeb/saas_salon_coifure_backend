@@ -1,12 +1,15 @@
 import { NextFunction, Request, Response } from "express";
+import { GetCurrentUser } from "../../application/usecases/auth/GetCurrentUser";
 import { LoginUser } from "../../application/usecases/auth/LoginUser";
 import { RegisterUser } from "../../application/usecases/auth/RegisterUser";
 import { AppError } from "../../shared/errors/AppError";
+import { AuthRequest } from "../http/AuthRequest";
 
 export class AuthController {
   constructor(
     private readonly registerUser: RegisterUser,
-    private readonly loginUser: LoginUser
+    private readonly loginUser: LoginUser,
+    private readonly getCurrentUser: GetCurrentUser
   ) {}
 
   register = async (req: Request, res: Response, next: NextFunction) => {
@@ -32,6 +35,16 @@ export class AuthController {
       if (!email || !password) throw new AppError("email and password required", 422);
       const result = await this.loginUser.execute({ email, password });
       res.json(result);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  me = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user) throw new AppError("Unauthorized", 401);
+      const user = await this.getCurrentUser.execute(req.user.id);
+      res.json({ id: user.id, name: user.name, email: user.email, role: user.role });
     } catch (error) {
       next(error);
     }
