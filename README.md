@@ -44,8 +44,19 @@ src/
 ```bash
 npm install
 cp .env.example .env
+npm run prisma:generate
+npx prisma migrate deploy
+npm run seed
+npm run dev
+```
+
+## Base locale avec Docker
+
+```bash
+docker compose up -d postgres
+cp .env.example .env
 npx prisma generate
-npx prisma migrate dev --name init
+npx prisma migrate deploy
 npm run seed
 npm run dev
 ```
@@ -53,7 +64,7 @@ npm run dev
 ## Variables d'environnement
 
 ```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/saas_salon"
+DATABASE_URL="postgresql://postgres:postgres@localhost:5433/saas_salon?schema=public"
 JWT_SECRET="change-me"
 PORT=3000
 ```
@@ -104,8 +115,18 @@ Puis dans Render:
 1. Creer le service via `render.yaml`
 2. Laisser Render provisionner la base Postgres
 3. Verifier que `JWT_SECRET` est bien defini
-4. Deployer la branche `develop`
-5. Executer `npm run seed` en one-off shell si tu veux des donnees de demo
+4. Verifier que `DATABASE_URL` pointe vers la base Render provisionnee
+5. Deployer la branche `develop`
+6. Executer `npm run seed` en one-off shell si tu veux des donnees de demo
+
+Variables Render attendues:
+
+```env
+NODE_ENV=production
+PORT=10000
+DATABASE_URL=<render-postgres-connection-string>
+JWT_SECRET=<secret-fort>
+```
 
 ## Git
 

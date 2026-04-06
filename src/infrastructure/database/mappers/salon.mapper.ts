@@ -1,13 +1,35 @@
-import {
-  Booking as PrismaBooking,
-  Salon as PrismaSalon,
-  Service as PrismaService
-} from "@prisma/client";
 import { Booking } from "../../../domain/entities/Booking";
 import { Salon } from "../../../domain/entities/Salon";
 import { Service } from "../../../domain/entities/Service";
 
-export const toSalonEntity = (salon: PrismaSalon): Salon =>
+type PrismaSalonLike = {
+  id: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  ownerId: string;
+};
+
+type PrismaServiceLike = {
+  id: string;
+  salonId: string;
+  name: string;
+  price: number | { toString(): string };
+  durationMinutes: number;
+};
+
+type PrismaBookingLike = {
+  id: string;
+  userId: string;
+  salonId: string;
+  serviceId: string;
+  startTime: Date;
+  endTime: Date;
+  status: Booking["status"];
+};
+
+export const toSalonEntity = (salon: PrismaSalonLike): Salon =>
   new Salon(
     salon.name,
     salon.address,
@@ -17,7 +39,7 @@ export const toSalonEntity = (salon: PrismaSalon): Salon =>
     salon.id
   );
 
-export const toServiceEntity = (service: PrismaService): Service =>
+export const toServiceEntity = (service: PrismaServiceLike): Service =>
   new Service(
     service.salonId,
     service.name,
@@ -26,7 +48,7 @@ export const toServiceEntity = (service: PrismaService): Service =>
     service.id
   );
 
-export const toBookingEntity = (booking: PrismaBooking): Booking =>
+export const toBookingEntity = (booking: PrismaBookingLike): Booking =>
   new Booking(
     booking.userId,
     booking.salonId,

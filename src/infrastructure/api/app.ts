@@ -15,6 +15,8 @@ import { GetOwnerSalon } from "../../application/usecases/salon/GetOwnerSalon";
 import { GetNearbySalons } from "../../application/usecases/salon/GetNearbySalons";
 import { ListSalons } from "../../application/usecases/salon/ListSalons";
 import { ListOwnerBookings } from "../../application/usecases/salon/ListOwnerBookings";
+import { IProductRepository } from "../../domain/repositories/IProductRepository";
+import { ISalonRepository } from "../../domain/repositories/ISalonRepository";
 import { PrismaBookingRepository } from "../database/repositories/PrismaBookingRepository";
 import { PrismaOrderRepository } from "../database/repositories/PrismaOrderRepository";
 import { PrismaProductRepository } from "../database/repositories/PrismaProductRepository";
@@ -39,9 +41,9 @@ import { ServiceController } from "../../interfaces/controllers/ServiceControlle
 export const buildApp = () => {
   const app = express();
   const userRepository = new PrismaUserRepository();
-  const salonRepository = new PrismaSalonRepository();
+  const salonRepository: ISalonRepository = new PrismaSalonRepository();
   const bookingRepository = new PrismaBookingRepository();
-  const productRepository = new PrismaProductRepository();
+  const productRepository: IProductRepository = new PrismaProductRepository();
   const orderRepository = new PrismaOrderRepository();
   const hashService = new BcryptHashService();
   const tokenService = new JwtTokenService(process.env.JWT_SECRET ?? "change-me");
