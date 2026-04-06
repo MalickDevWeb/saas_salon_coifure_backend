@@ -2,6 +2,16 @@
 
 Backend MVP en `Node.js + Express + TypeScript + Prisma + PostgreSQL`.
 
+## Workflow Git
+
+Voir `CONTRIBUTING.md` pour la strategie de branches:
+
+- `main` = stable
+- `develop` = integration
+- `feature/*` = fonctionnalite
+- `release/*` = preparation mise en production
+- `hotfix/*` = correction urgente
+
 ## Stack
 
 - `Express` pour l'API REST
