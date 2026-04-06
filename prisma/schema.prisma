@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  role         UserRole
+  salons       Salon[]
+  bookings     Booking[]
+  orders       Order[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Salon {
+  id         String    @id @default(uuid())
+  name       String
+  address    String
+  latitude   Float
+  longitude  Float
+  ownerId    String
+  owner      User      @relation(fields: [ownerId], references: [id])
+  services   Service[]
+  products   Product[]
+  bookings   Booking[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model Service {
+  id              String    @id @default(uuid())
+  salonId         String
+  salon           Salon     @relation(fields: [salonId], references: [id])
+  name            String
+  price           Decimal   @db.Decimal(10, 2)
+  durationMinutes Int
+  bookings        Booking[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Booking {
+  id        String        @id @default(uuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id])
+  salonId   String
+  salon     Salon         @relation(fields: [salonId], references: [id])
+  serviceId String
+  service   Service       @relation(fields: [serviceId], references: [id])
+  startTime DateTime
+  endTime   DateTime
+  status    BookingStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model Product {
+  id        String    @id @default(uuid())
+  salonId   String
+  salon     Salon     @relation(fields: [salonId], references: [id])
+  name      String
+  price     Decimal   @db.Decimal(10, 2)
+  stock     Int
+  isActive  Boolean   @default(true)
+  items     OrderItem[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Order {
+  id          String       @id @default(uuid())
+  userId      String
+  user        User         @relation(fields: [userId], references: [id])
+  status      OrderStatus  @default(PENDING)
+  totalAmount Decimal      @db.Decimal(10, 2)
+  items       OrderItem[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id])
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  quantity   Int
+  unitPrice  Decimal  @db.Decimal(10, 2)
+  createdAt  DateTime @default(now())
+}
+
+enum UserRole {
+  CLIENT
+  SALON
+  ADMIN
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELED
+  COMPLETED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELED
+  COMPLETED
+}
